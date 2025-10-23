@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OBITO UCHIHA - Free Likes</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>OBITO UCHIHA</h1>
+    <p class="subtitle">Free Likes Tool</p>
+
+    <form id="likeForm">
+      <label>UID (numeric)</label>
+      <input type="text" id="uid" name="uid" placeholder="e.g. 8385763215" required />
+
+      <label>Server</label>
+      <select id="server_name" name="server_name" required>
+        <option value="ind">ind</option>
+        <option value="pak">pak</option>
+        <option value="us">us</option>
+        <option value="eu">eu</option>
+        <option value="asia">asia</option>
+        <option value="global">global</option>
+      </select>
+
+      <button type="submit">Send Like</button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <footer>
+      <p>MADED BY OBITO TOOLS OWNER</p>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('likeForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      result.textContent = 'Sending...';
+
+      const uid = document.getElementById('uid').value.trim();
+      const server_name = document.getElementById('server_name').value;
+
+      // basic client validation
+      if (!uid.match(/^[0-9]+$/)) {
+        result.textContent = 'UID must be numeric only.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid, server_name })
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          result.innerHTML = '<b>Error:</b> ' + (data.error || JSON.stringify(data));
+        } else {
+          result.innerHTML = '<b>Success:</b> API status ' + data.status + '<br/><pre>' + JSON.stringify(data.result, null, 2) + '</pre>';
+        }
+      } catch (err) {
+        result.innerHTML = '<b>Request failed:</b> ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
